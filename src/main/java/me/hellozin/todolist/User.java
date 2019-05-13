@@ -1,10 +1,10 @@
 package me.hellozin.todolist;
 
+import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
-import lombok.ToString;
 
-import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
@@ -12,17 +12,12 @@ import javax.persistence.Id;
 @Entity
 @Setter
 @Getter
-@ToString
-public class Todo {
+public class User {
 
     @Id
     @GeneratedValue
     private long id;
 
-    private String author;
-
-    private String title;
-
-    private String content;
+    private String name;
 
 }

@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<h1>TODO List</h1>
+<table>
+    <thead>
+    <tr>
+        <th>제목</th>
+        <th>내용</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="todo: ${todoList}">
+        <td th:text="${todo.title}">제목</td>
+        <td th:text="${todo.content}">내용</td>
+    </tr>
+    </tbody>
+</table>
+</body>
+</html>
