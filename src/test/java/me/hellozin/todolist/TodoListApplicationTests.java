@@ -36,10 +36,10 @@ public class TodoListApplicationTests {
     @Test
     public void login() throws Exception {
         mockMvc.perform(post("/login")
-                .param("user", "hellozin")
+                .param("name", "hellozin")
         )
                 .andDo(print())
-                .andExpect(cookie().value("user", "hellozin"));
+                .andExpect(cookie().value("author", "hellozin"));
     }
 
     @Test
@@ -52,7 +52,7 @@ public class TodoListApplicationTests {
         todoRepository.save(todo);
 
         MvcResult mvcResult = mockMvc.perform(get("/list")
-                .cookie(new Cookie("user", "hellozin"))
+                .cookie(new Cookie("author", "hellozin"))
         )
                 .andExpect(status().isOk())
                 .andReturn();
