@@ -15,9 +15,9 @@ import org.springframework.test.web.servlet.MockMvc;
 import javax.servlet.http.Cookie;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
@@ -31,9 +31,18 @@ public class TodoListApplicationTests {
     MockMvc mockMvc;
 
     @Test
+    public void login() throws Exception {
+        mockMvc.perform(post("/login")
+                .param("user", "hellozin")
+        )
+                .andDo(print())
+                .andExpect(cookie().value("user", "hellozin"));
+    }
+
+    @Test
     public void showTodoList() throws Exception {
         Todo todo = new Todo();
-        todo.setAuthor("hello");
+        todo.setAuthor("hellozin");
         todo.setTitle("New TODO");
         todo.setContent("you should do that");
 
