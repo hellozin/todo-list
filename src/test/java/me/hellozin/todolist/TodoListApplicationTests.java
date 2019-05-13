@@ -11,8 +11,11 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.MvcResult;
 
 import javax.servlet.http.Cookie;
+
+import java.util.List;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -44,16 +47,18 @@ public class TodoListApplicationTests {
         Todo todo = new Todo();
         todo.setAuthor("hellozin");
         todo.setTitle("New TODO");
-        todo.setContent("you should do that");
+        todo.setContent("testing");
 
         todoRepository.save(todo);
 
-        mockMvc.perform(get("/list")
-                .cookie(new Cookie("user", "hello"))
+        MvcResult mvcResult = mockMvc.perform(get("/list")
+                .cookie(new Cookie("user", "hellozin"))
         )
-                .andDo(print())
                 .andExpect(status().isOk())
-                .andExpect(content().string("you should do that"));
+                .andReturn();
+
+        List<Todo> todoList = (List) mvcResult.getModelAndView().getModel().get("todoList");
+        assert todoList.get(0).getContent().equals("testing");
     }
 
 }
