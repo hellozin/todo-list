@@ -9,6 +9,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
+import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.Cookie;
 import java.util.List;
@@ -61,8 +62,14 @@ public class TodoListApplicationTests {
                 .andExpect(status().isOk())
                 .andReturn();
 
-        List<Todo> todoList = (List) mvcResult.getModelAndView().getModel().get("todoList");
-        assert todoList.get(0).getContent().equals(todoForTest.getContent());
+        String content = Optional.ofNullable(mvcResult.getModelAndView())
+                .map(ModelAndView::getModel)
+                .map(model -> (List) model.get("todoList"))
+                .map(list -> (Todo) list.get(0))
+                .map(Todo::getContent)
+                .orElse("");
+
+        assert content.equals(todoForTest.getContent());
     }
 
     @Test
@@ -99,10 +106,11 @@ public class TodoListApplicationTests {
                 .param("id", String.valueOf(todoForTest.getId()))
                 .param("title", "Changed Title")
                 .param("content", "Changed Content")
+                .cookie(new Cookie("author", todoForTest.getAuthor()))
         )
                 .andExpect(status().is3xxRedirection());
 
         Optional<Todo> changedTodo = todoRepository.findById(todoForTest.getId());
-        assert changedTodo.orElse(todoForTest).getTitle().equals("Changed Title");
+        assert changedTodo.map(Todo::getTitle).orElse("Has no title.").equals("Changed Title");
     }
 }
