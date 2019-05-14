@@ -16,12 +16,19 @@
     <tr>
         <th>제목</th>
         <th>내용</th>
+        <th>form</th>
     </tr>
     </thead>
     <tbody>
     <tr th:each="todo: ${todoList}">
         <td th:text="${todo.title}">제목</td>
         <td th:text="${todo.content}">내용</td>
+        <td>
+            <form th:action="@{/todo}" th:method="delete">
+                <input type="hidden" name="id" th:value="${todo.id}">
+                <button type="submit">삭제</button>
+            </form>
+        </td>
     </tr>
     </tbody>
 </table>
