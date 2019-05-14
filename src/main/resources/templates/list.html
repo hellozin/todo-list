@@ -5,7 +5,12 @@
     <title>Title</title>
 </head>
 <body>
-<h1>TODO List</h1>
+<h1><span th:text="${author}"></span>의 TODO List</h1>
+<form action="#" th:action="@{/todo}" th:object="${todo}" method="post">
+    <input type="text" th:field="*{title}">
+    <input type="text" th:field="*{content}">
+    <button type="submit">추가</button>
+</form>
 <table>
     <thead>
     <tr>

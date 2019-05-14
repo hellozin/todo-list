@@ -1,17 +1,14 @@
 package me.hellozin.todolist;
 
-import org.springframework.boot.web.servlet.server.Session;
 import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.CookieValue;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletResponse;
 import java.util.List;
+import java.util.Map;
 
 @Controller
 public class TodoController {
@@ -23,21 +20,29 @@ public class TodoController {
     }
 
     @GetMapping("/login")
-    public String loginForm(User user) {
+    public String loginForm(User author) {
         return "login";
     }
 
     @PostMapping("/login")
-    public String doLogin(User user, HttpServletResponse response) {
-        response.addCookie(new Cookie("author", user.getName()));
+    public String doLogin(User author, HttpServletResponse response) {
+        response.addCookie(new Cookie("author", author.getName()));
         return "redirect:/list";
     }
 
     @GetMapping("/list")
-    public String getTodoList(@CookieValue String author, Model model) {
+    public String getTodoList(Todo todo, Map<String, Object> model, @CookieValue String author) {
         List<Todo> todoList = todoRepository.findAllByAuthor(author);
-        model.addAttribute("todoList", todoList);
+        model.put("todoList", todoList);
+        model.put("author", author);
         return "list";
+    }
+
+    @PostMapping("/todo")
+    public String createTodo(Todo todo, @CookieValue String author) {
+        todo.setAuthor(author);
+        todoRepository.save(todo);
+        return "redirect:/list";
     }
 
 }
