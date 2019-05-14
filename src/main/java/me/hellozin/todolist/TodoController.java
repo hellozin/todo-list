@@ -44,18 +44,30 @@ public class TodoController {
         return "redirect:/list";
     }
 
+    @PutMapping("/todo")
+    public String updateTodo(Todo changedTodo, @CookieValue String author) {
+        Todo baseTodo = todoRepository.findById(changedTodo.getId()).orElse(changedTodo);
+        if (author.equals(baseTodo.getAuthor())) {
+            baseTodo.setTitle(changedTodo.getTitle());
+            baseTodo.setContent(changedTodo.getContent());
+            todoRepository.save(baseTodo);
+        } else {
+            /* Author Not Match Error */
+        }
+        return "redirect:/list";
+    }
+
     @DeleteMapping("/todo")
     public String deleteTodo(@RequestParam String id, @CookieValue String author) {
         Optional<Todo> todo = todoRepository.findById(Long.valueOf(id));
-        if (todo.isPresent()) {
-            if (todo.get().getAuthor().equals(author)) {
-                todoRepository.deleteById(Long.valueOf(id));
-            } else {
-                /* Author Not Match Error */
-            }
+        String authorOfId = todo.map(Todo::getAuthor).orElse("");
+
+        if (authorOfId.equals(author)) {
+            todoRepository.deleteById(Long.valueOf(id));
         } else {
-            /* Selected *TODOobj is not exist Error. */
+            /* Author Not Match Error */
         }
+
         return "redirect:/list";
     }
 
