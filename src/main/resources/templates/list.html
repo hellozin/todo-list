@@ -11,19 +11,21 @@
     <input type="text" th:field="*{content}">
     <button type="submit">추가</button>
 </form>
-<table>
-    <thead>
-    <tr>
-        <th>제목</th>
-        <th>내용</th>
-    </tr>
-    </thead>
-    <tbody>
-    <tr th:each="todo: ${todoList}">
-        <td th:text="${todo.title}">제목</td>
-        <td th:text="${todo.content}">내용</td>
-    </tr>
-    </tbody>
-</table>
+<div th:each="todoi: ${todoList}">
+    <form action="#" th:action="@{/todo}" th:object="${todo}" th:method="put">
+        <div>
+            <input type="text" th:name="title" th:value="${todoi.title}">
+        </div>
+        <div>
+            <input type="text" th:name="content" th:value="${todoi.content}">
+        </div>
+        <input type="hidden" name="id" th:value="${todoi.id}">
+        <button type="submit">수정</button>
+    </form>
+    <form th:action="@{/todo}" th:method="delete">
+        <input type="hidden" name="id" th:value="${todoi.id}">
+        <button type="submit">삭제</button>
+    </form>
+</div>
 </body>
 </html>
