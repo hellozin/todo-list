@@ -12,6 +12,7 @@ import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
+import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.Cookie;
 
@@ -59,6 +60,26 @@ public class TodoListApplicationTests {
 
         List<Todo> todoList = (List) mvcResult.getModelAndView().getModel().get("todoList");
         assert todoList.get(0).getContent().equals("testing");
+    }
+
+    @Test
+    public void createTodoTest() throws Exception {
+        Todo todo = new Todo();
+        todo.setAuthor("hellozin");
+        todo.setTitle("New TODO");
+        todo.setContent("testing");
+
+        mockMvc.perform(post("/todo")
+                .cookie(new Cookie("author", todo.getAuthor()))
+                .param("title", todo.getTitle())
+                .param("content", todo.getContent())
+        )
+                .andDo(print())
+                .andExpect(status().is3xxRedirection());
+
+        List<Todo> allByAuthor = todoRepository.findAllByAuthor(todo.getAuthor());
+        assert allByAuthor.get(0).getContent().equals("testing");
+
     }
 
 }
