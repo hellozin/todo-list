@@ -38,11 +38,11 @@
         </div>
 
         <div class="form-row">
-            <label for="inlineFormCustomSelect" class="col-form-label col-auto">중요도</label>
-            <select class="custom-select col-2" id="inlineFormCustomSelect">
-                <option value="1">1</option>
+            <label for="importance" class="col-form-label col-auto">중요도</label>
+            <select class="custom-select col-2" id="importance" name="importance">
+                <option value="1" selected>1</option>
                 <option value="2">2</option>
-                <option value="3" selected>3</option>
+                <option value="3">3</option>
                 <option value="4">4</option>
                 <option value="5">5</option>
             </select>
@@ -57,8 +57,9 @@
     <div th:each="todo: ${todoList}" class="card my-3 mx-auto" style="max-width: 350px; min-width: 350px">
         <div class="card-body">
             <form th:action="@{/todo}" th:method="delete">
-                <input type="hidden" name="id" th:value="${todo.id}">
-                <button type="submit" class="close" aria-label="Close">
+                <span>#</span>
+                <input type="text" readonly name="id" th:value="${todo.id}">
+                <button type="submit" class="close mb-2" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
             </form>
@@ -70,8 +71,17 @@
                     <textarea class="form-control" rows="3" th:name="content"
                               th:inline="text">[[${todo.content}]]</textarea>
                 </div>
-                <input type="hidden" name="id" th:value="${todo.id}">
-                <button type="submit" class="btn btn-primary">수정</button>
+                <div class="form-row">
+                    <input type="hidden" name="id" th:value="${todo.id}">
+                    <select class="custom-select col-2" id="importance" name="importance">
+                        <option th:each="i : ${#numbers.sequence(1,5)}"
+                                th:value="${i}"
+                                th:text="${i}"
+                                th:selected="${i == todo.importance}">
+                        </option>
+                    </select>
+                    <button type="submit" class="btn btn-primary">수정</button>
+                </div>
             </form>
         </div>
     </div>
