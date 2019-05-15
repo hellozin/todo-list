@@ -2,30 +2,87 @@
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title>Title</title>
+    <link rel="stylesheet" href="/webjars/bootstrap/4.3.1/css/bootstrap.min.css">
+    <link rel="stylesheet" href="/webjars/bootstrap-datepicker/1.8.0/css/bootstrap-datepicker.min.css">
 </head>
 <body>
-<h1><span th:text="${author}"></span>의 TODO List</h1>
-<form action="#" th:action="@{/todo}" th:object="${todo}" method="post">
-    <input type="text" th:field="*{title}">
-    <input type="text" th:field="*{content}">
-    <button type="submit">추가</button>
-</form>
-<div th:each="todoi: ${todoList}">
-    <form action="#" th:action="@{/todo}" th:object="${todo}" th:method="put">
-        <div>
-            <input type="text" th:name="title" th:value="${todoi.title}">
+<div class="pricing-header pt-5 pb-3 mx-auto text-center">
+    <h1 class="display-4"><span th:text="${author}"></span>'s TODO List</h1>
+</div>
+
+<div class="container" style="max-width: 350px; min-width: 350px">
+    <form action="#" th:action="@{/todo}" th:object="${todo}" method="post">
+        <p class="lead">Create New TODO List!</p>
+        <div class="form-group">
+            <input type="text" class="form-control" th:field="*{title}" placeholder="Title">
         </div>
-        <div>
-            <input type="text" th:name="content" th:value="${todoi.content}">
+        <div class="form-group">
+            <textarea class="form-control" rows="3" th:field="*{content}" placeholder="Content"></textarea>
         </div>
-        <input type="hidden" name="id" th:value="${todoi.id}">
-        <button type="submit">수정</button>
-    </form>
-    <form th:action="@{/todo}" th:method="delete">
-        <input type="hidden" name="id" th:value="${todoi.id}">
-        <button type="submit">삭제</button>
+
+        <div class="form-group">
+            <div class="input-group">
+                <div class="input-group-prepend">
+
+                    <div class="input-group-text">
+                        <input type="checkbox" aria-label="Checkbox for following text input">
+                    </div>
+                </div>
+                <div class="date" data-provide="datepicker">
+                    <input type="text" class="form-control">
+                    <div class="input-group-addon">
+                        <span class="glyphicon glyphicon-th"></span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="form-row">
+            <label for="inlineFormCustomSelect" class="col-form-label col-auto">중요도</label>
+            <select class="custom-select col-2" id="inlineFormCustomSelect">
+                <option value="1">1</option>
+                <option value="2">2</option>
+                <option value="3" selected>3</option>
+                <option value="4">4</option>
+                <option value="5">5</option>
+            </select>
+            <div>
+                <button type="submit" class="btn btn-primary col-auto">작성</button>
+            </div>
+        </div>
     </form>
 </div>
+
+<div class="card-deck w-75 py-5 mx-auto">
+    <div th:each="todo: ${todoList}" class="card my-3 mx-auto" style="max-width: 350px; min-width: 350px">
+        <div class="card-body">
+            <form th:action="@{/todo}" th:method="delete">
+                <input type="hidden" name="id" th:value="${todo.id}">
+                <button type="submit" class="close" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </form>
+            <form action="#" th:action="@{/todo}" th:object="${todo}" th:method="put">
+                <div class="form-group">
+                    <input type="text" class="form-control" th:name="title" th:value="${todo.title}">
+                </div>
+                <div class="form-group">
+                    <textarea class="form-control" rows="3" th:name="content"
+                              th:inline="text">[[${todo.content}]]</textarea>
+                </div>
+                <input type="hidden" name="id" th:value="${todo.id}">
+                <button type="submit" class="btn btn-primary">수정</button>
+            </form>
+        </div>
+    </div>
+</div>
 </body>
+<script src="/webjars/jquery/3.4.1/jquery.min.js"></script>
+<script src="/webjars/bootstrap-datepicker/1.8.0/js/bootstrap-datepicker.min.js"></script>
+<script>
+    $('.datepicker').datepicker({
+        format: 'mm/dd/yyyy',
+        startDate: '-3d'
+    });
+</script>
 </html>
