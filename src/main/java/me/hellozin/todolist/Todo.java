@@ -30,4 +30,6 @@ public class Todo {
     @Max(5)
     private int importance;
 
+    private boolean done;
+
 }
