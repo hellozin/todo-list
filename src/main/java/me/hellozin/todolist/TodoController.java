@@ -50,6 +50,7 @@ public class TodoController {
         if (author.equals(baseTodo.getAuthor())) {
             baseTodo.setTitle(changedTodo.getTitle());
             baseTodo.setContent(changedTodo.getContent());
+            baseTodo.setImportance(changedTodo.getImportance());
             todoRepository.save(baseTodo);
         } else {
             /* Author Not Match Error */
