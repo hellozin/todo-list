@@ -23,7 +23,6 @@
         <div class="form-group">
             <div class="input-group">
                 <div class="input-group-prepend">
-
                     <div class="input-group-text">
                         <input type="checkbox" aria-label="Checkbox for following text input">
                     </div>
@@ -40,11 +39,11 @@
         <div class="form-row">
             <label for="importance" class="col-form-label col-auto">중요도</label>
             <select class="custom-select col-2" id="importance" name="importance">
-                <option value="1" selected>1</option>
-                <option value="2">2</option>
-                <option value="3">3</option>
-                <option value="4">4</option>
-                <option value="5">5</option>
+                <option th:each="i : ${#numbers.sequence(1,5)}"
+                        th:value="${i}"
+                        th:text="${i}"
+                >
+                </option>
             </select>
             <div>
                 <button type="submit" class="btn btn-primary col-auto">작성</button>
@@ -54,11 +53,12 @@
 </div>
 
 <div class="card-deck w-75 py-5 mx-auto">
-    <div th:each="todo: ${todoList}" class="card my-3 mx-auto" style="max-width: 350px; min-width: 350px">
+    <div th:each="todo: ${todoList}" class="card my-3 mx-auto"
+         th:classappend="${!todo.isDone() ? 'done' : 'bg-light'}" style="max-width: 350px; min-width: 350px">
         <div class="card-body">
             <form th:action="@{/todo}" th:method="delete">
                 <span>#</span>
-                <input type="text" readonly name="id" th:value="${todo.id}">
+                <input type="text" class="border-0 w-25" name="id" th:value="${todo.id}" readonly>
                 <button type="submit" class="close mb-2" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
@@ -82,6 +82,11 @@
                     </select>
                     <button type="submit" class="btn btn-primary">수정</button>
                 </div>
+            </form>
+            <p th:text="${todo.done}"></p>
+            <form th:action="@{/todo/done}" th:method="put">
+                <input type="hidden" name="id" th:value="${todo.id}">
+                <button type="submit" class="done btn btn-primary">완료</button>
             </form>
         </div>
     </div>

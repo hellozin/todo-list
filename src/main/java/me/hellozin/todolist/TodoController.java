@@ -31,7 +31,7 @@ public class TodoController {
 
     @GetMapping("/list")
     public String getTodoList(Todo todo, Map<String, Object> model, @CookieValue String author) {
-        List<Todo> todoList = todoRepository.findAllByAuthor(author);
+        List<Todo> todoList = todoRepository.findAllByAuthorOrderByDoneAscImportanceDesc(author);
         model.put("todoList", todoList);
         model.put("author", author);
         return "list";
@@ -40,6 +40,7 @@ public class TodoController {
     @PostMapping("/todo")
     public String createTodo(Todo todo, @CookieValue String author) {
         todo.setAuthor(author);
+        todo.setDone(false);
         todoRepository.save(todo);
         return "redirect:/list";
     }
@@ -68,6 +69,17 @@ public class TodoController {
         } else {
             /* Author Not Match Error */
         }
+
+        return "redirect:/list";
+    }
+
+    @PutMapping("/todo/done")
+    public String doneTodo(@RequestParam long id) {
+        Optional<Todo> mayTodoById = todoRepository.findById(id);
+        mayTodoById.ifPresent(todoById -> {
+            todoById.setDone(!todoById.isDone());
+            todoRepository.save(todoById);
+        });
 
         return "redirect:/list";
     }
