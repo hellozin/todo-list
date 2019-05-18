@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <link rel="stylesheet" href="/webjars/bootstrap/4.3.1/css/bootstrap.min.css">
-    <link rel="stylesheet" href="/webjars/bootstrap-datepicker/1.8.0/css/bootstrap-datepicker.min.css">
+    <link rel="stylesheet" href="/webjars/bootstrap-datepicker/1.8.0/css/bootstrap-datepicker3.css">
 </head>
 <body>
 <div class="pricing-header pt-5 pb-3 mx-auto text-center">
@@ -27,12 +27,7 @@
                         <input type="checkbox" aria-label="Checkbox for following text input">
                     </div>
                 </div>
-                <div class="date" data-provide="datepicker">
-                    <input type="text" class="form-control">
-                    <div class="input-group-addon">
-                        <span class="glyphicon glyphicon-th"></span>
-                    </div>
-                </div>
+                <input class="datepicker" data-provide="datepicker" th:field="*{deadline}">
             </div>
         </div>
 
@@ -53,8 +48,14 @@
 </div>
 
 <div class="card-deck w-75 py-5 mx-auto">
-    <div th:each="todo: ${todoList}" class="card my-3 mx-auto"
-         th:classappend="${!todo.isDone() ? 'done' : 'bg-light'}" style="max-width: 350px; min-width: 350px">
+    <div class="card my-3 mx-auto" style="max-width: 350px; min-width: 350px"
+         th:classappend="${!todo.isDone() ? 'done' : 'bg-light'}"
+         th:each="todo: ${todoList}">
+
+        <div class="card-header">
+            <p th:text="${todo.isExpired() ? '마감' : '진행중'}"></p>
+        </div>
+
         <div class="card-body">
             <form th:action="@{/todo}" th:method="delete">
                 <span>#</span>
@@ -93,11 +94,10 @@
 </div>
 </body>
 <script src="/webjars/jquery/3.4.1/jquery.min.js"></script>
-<script src="/webjars/bootstrap-datepicker/1.8.0/js/bootstrap-datepicker.min.js"></script>
+<script src="/webjars/bootstrap-datepicker/1.8.0/js/bootstrap-datepicker.js"></script>
 <script>
     $('.datepicker').datepicker({
-        format: 'mm/dd/yyyy',
-        startDate: '-3d'
+        format: 'yy-mm-dd'
     });
 </script>
 </html>
