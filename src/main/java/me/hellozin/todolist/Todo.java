@@ -3,12 +3,14 @@ package me.hellozin.todolist;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
+import org.springframework.format.annotation.DateTimeFormat;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
+import java.time.LocalDate;
 
 @Entity
 @Setter
@@ -31,5 +33,12 @@ public class Todo {
     private int importance;
 
     private boolean done;
+
+    @DateTimeFormat(pattern = "yy-MM-dd")
+    private LocalDate deadline;
+
+    public boolean isExpired() {
+        return (deadline == null ? LocalDate.MAX : deadline).isBefore(LocalDate.now());
+    }
 
 }
