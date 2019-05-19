@@ -5,8 +5,8 @@
     <title>Title</title>
 </head>
 <body>
-<form action="#" th:action="@{/login}" th:object="${user}" method="post">
-    <input type="text" th:field="*{name}">
+<form action="#" th:action="@{/login}" method="post">
+    <input type="text" name="author">
     <button type="submit">입장</button>
 </form>
 </body>

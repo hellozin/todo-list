@@ -19,13 +19,13 @@ public class TodoController {
     }
 
     @GetMapping("/login")
-    public String loginForm(User author) {
+    public String loginForm() {
         return "login";
     }
 
     @PostMapping("/login")
-    public String doLogin(User author, HttpServletResponse response) {
-        response.addCookie(new Cookie("author", author.getName()));
+    public String doLogin(@RequestParam String author, HttpServletResponse response) {
+        response.addCookie(new Cookie("author", author));
         return "redirect:/list";
     }
 
