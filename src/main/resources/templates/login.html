@@ -2,12 +2,34 @@
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
+    <link rel="stylesheet" href="/webjars/bootstrap/4.3.1/css/bootstrap.min.css">
+    <link rel="canonical" href="https://getbootstrap.com/docs/4.3/examples/sign-in/">
     <title>Title</title>
+    <style>
+        html, body {
+            height: 100%;
+        }
+
+        .form-signin {
+            width: 100%;
+            max-width: 330px;
+            padding: 15px;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            -ms-transform: translateX(-50%) translateY(-50%);
+            transform: translateX(-50%) translateY(-50%);
+
+        }
+    </style>
 </head>
-<body>
-<form action="#" th:action="@{/login}" method="post">
-    <input type="text" name="author">
-    <button type="submit">입장</button>
+<body class="text-center">
+<form class="form-signin" action="#" th:action="@{/login}" method="post">
+    <h1 class="display-4 mb-5">Welcome</h1>
+    <label for="inputAuthor" class="sr-only">Author</label>
+    <input type="text" id="inputAuthor" name="author" class="form-control" placeholder="Choose your name." required=""
+           autofocus="">
+    <button class="btn btn-lg btn-primary btn-block my-5" type="submit">Enter</button>
 </form>
 </body>
 </html>
