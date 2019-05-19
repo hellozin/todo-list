@@ -1,6 +1,7 @@
 package me.hellozin.todolist;
 
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.Cookie;
@@ -82,6 +83,15 @@ public class TodoController {
         });
 
         return "redirect:/list";
+    }
+
+    @ExceptionHandler({
+            AuthorNotFoundException.class,
+            TodoException.class
+    })
+    public String tokenNotValid(TodoException exception, Model model) {
+        model.addAttribute("message", exception.getErrorMsg());
+        return "error";
     }
 
 }

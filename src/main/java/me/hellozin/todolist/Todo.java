@@ -1,6 +1,7 @@
 package me.hellozin.todolist;
 
 import lombok.Getter;
+import lombok.NonNull;
 import lombok.Setter;
 import lombok.ToString;
 import org.springframework.format.annotation.DateTimeFormat;
@@ -22,8 +23,10 @@ public class Todo {
     @GeneratedValue
     private long id;
 
+    @NonNull
     private String author;
 
+    @NonNull
     private String title;
 
     private String content;
@@ -32,6 +35,7 @@ public class Todo {
     @Max(5)
     private int importance;
 
+    @NonNull
     private boolean done;
 
     @DateTimeFormat(pattern = "yy-MM-dd")
