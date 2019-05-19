@@ -3,9 +3,41 @@
 <head>
     <meta charset="UTF-8">
     <title>Title</title>
+    <link href="/webjars/bootstrap/4.3.1/css/bootstrap.min.css" rel="stylesheet">
+    <script src="/webjars/jquery/3.4.1/jquery.min.js"></script>
 </head>
+<style>
+    .error-template {
+        padding: 200px 15px;
+        text-align: center;
+    }
+
+    .error-actions {
+        margin-top: 20px;
+        margin-bottom: 15px;
+    }
+
+    .error-actions .btn {
+        margin-right: 10px;
+    }
+</style>
 <body>
-<p th:if="${message}" th:text="${message}"></p>
-<a href="/login">로그인 화면으로</a>
+<div class="container">
+    <div class="row">
+        <div class="col-md-12">
+            <div class="error-template">
+                <h1>Oops!</h1>
+                <h2>An error has occurred.</h2>
+                <div class="error-details" th:text="${message}">
+                    Sorry, an error has occured, Requested page not found!
+                </div>
+                <div class="error-actions">
+                    <a class="btn btn-primary btn-lg" href="/login">
+                        <span class="glyphicon glyphicon-home"></span> Back to Login </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 </body>
 </html>

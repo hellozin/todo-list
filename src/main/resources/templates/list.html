@@ -2,92 +2,97 @@
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <link rel="stylesheet" href="/webjars/bootstrap/4.3.1/css/bootstrap.min.css">
-    <link rel="stylesheet" href="/webjars/bootstrap-datepicker/1.8.0/css/bootstrap-datepicker3.css">
+    <link href="/webjars/bootstrap/4.3.1/css/bootstrap.min.css" rel="stylesheet">
+    <link href="/webjars/bootstrap-datepicker/1.8.0/css/bootstrap-datepicker3.css" rel="stylesheet">
 </head>
+<title>TODO List</title>
+<style>
+    #todo-form {
+        width: 350px;
+    }
+</style>
 <body>
-<div class="pricing-header pt-5 pb-3 mx-auto text-center">
-    <h1 class="display-4"><span th:text="${author}"></span>'s TODO List</h1>
-</div>
 
-<div class="container" style="max-width: 350px; min-width: 350px">
-    <form action="#" th:action="@{/todo}" th:object="${todo}" method="post">
-        <p class="lead">Create New TODO List!</p>
+<div class="container rounded">
+    <div class="pricing-header pt-5 pb-3 mx-auto text-center">
+        <h1 class="display-4"><span th:text="${author}"></span>'s TODO List</h1>
+    </div>
+    <form autocomplete="off" class="mx-auto" id="todo-form" method="post" th:action="@{/todo}" th:object="${todo}">
+        <p class="lead">새로운 TODO를 작성해보세요.</p>
         <div class="form-group">
-            <input type="text" class="form-control" th:field="*{title}" placeholder="Title">
+            <input class="form-control" placeholder="Title" th:field="*{title}" type="text">
         </div>
         <div class="form-group">
-            <textarea class="form-control" rows="3" th:field="*{content}" placeholder="Content"></textarea>
+            <textarea class="form-control" placeholder="Content" rows="3" th:field="*{content}"></textarea>
         </div>
-
         <div class="form-group">
-            <div class="input-group">
-                <div class="input-group-prepend">
-                    <div class="input-group-text">
-                        <input type="checkbox" aria-label="Checkbox for following text input">
-                    </div>
-                </div>
-                <input class="datepicker" data-provide="datepicker" th:field="*{deadline}">
+            <label class="pr-3" for="importance">중요도</label>
+            <div class="custom-control custom-radio custom-control-inline" id="importance"
+                 th:each="i : ${#numbers.sequence(1,5)}">
+                <input class="custom-control-input" name="importance" th:checked="${i} == 1 ? 'checked' : null"
+                       th:id="${'radio'+i}" th:value="${i}"
+                       type="radio">
+                <label class="custom-control-label" th:for="${'radio'+i}" th:text="${i}">1</label>
             </div>
         </div>
-
-        <div class="form-row">
-            <label for="importance" class="col-form-label col-auto">중요도</label>
-            <select class="custom-select col-2" id="importance" name="importance">
-                <option th:each="i : ${#numbers.sequence(1,5)}"
-                        th:value="${i}"
-                        th:text="${i}"
-                >
-                </option>
-            </select>
-            <div>
-                <button type="submit" class="btn btn-primary col-auto">작성</button>
-            </div>
+        <div class="form-group">
+            <label class="pr-3" for="deadline">마감일</label>
+            <input class="datepicker form-control d-inline w-50" id="deadline" th:field="*{deadline}" type="text"
+                   value="19-02-22">
+        </div>
+        <div>
+            <button class="btn btn-primary col-auto" type="submit">작성</button>
         </div>
     </form>
 </div>
 
 <div class="card-deck w-75 py-5 mx-auto">
-    <div class="card my-3 mx-auto" style="max-width: 350px; min-width: 350px"
-         th:classappend="${!todo.isDone() ? 'done' : 'bg-light'}"
+    <div class="card my-3 mx-auto" style="max-width: 380px; min-width: 380px"
+         th:classappend="${todo.isDone() ? 'alert-dark' : (todo.isExpired() ? 'alert-danger' : null)}"
          th:each="todo: ${todoList}">
-
-        <div class="card-header">
-            <p th:text="${todo.isExpired() ? '마감' : '진행중'}"></p>
-        </div>
-
         <div class="card-body">
-            <form th:action="@{/todo}" th:method="delete">
-                <span>#</span>
-                <input type="text" class="border-0 w-25" name="id" th:value="${todo.id}" readonly>
-                <button type="submit" class="close mb-2" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
-            </form>
-            <form action="#" th:action="@{/todo}" th:object="${todo}" th:method="put">
+            <div class="form-group">
+                <div class="clearfix">
+                    <form class="float-left" th:action="@{/todo/done}" th:method="put">
+                        <input name="id" th:value="${todo.id}" type="hidden">
+                        <button class="btn btn-outline-primary" th:text="${todo.isDone() ? '취소' : '완료'}" type="submit">
+                            완료
+                        </button>
+                    </form>
+                    <form class="float-right" th:action="@{/todo}" th:method="delete">
+                        <input name="id" readonly th:value="${todo.id}" type="hidden">
+                        <button aria-label="Close" class="close" type="submit">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </form>
+                </div>
+            </div>
+            <form action="#" autocomplete="off" class="changeable" th:action="@{/todo}" th:id="${todo.id}"
+                  th:method="put" th:object="${todo}">
+                <input name="id" th:value="${todo.id}" type="hidden">
                 <div class="form-group">
-                    <input type="text" class="form-control" th:name="title" th:value="${todo.title}">
+                    <input class="form-control" th:name="title" th:value="${todo.title}" type="text">
                 </div>
                 <div class="form-group">
-                    <textarea class="form-control" rows="3" th:name="content"
-                              th:inline="text">[[${todo.content}]]</textarea>
+                    <textarea class="form-control" rows="3" th:inline="text"
+                              th:name="content">[[${todo.content}]]</textarea>
                 </div>
-                <div class="form-row">
-                    <input type="hidden" name="id" th:value="${todo.id}">
-                    <select class="custom-select col-2" id="importance" name="importance">
-                        <option th:each="i : ${#numbers.sequence(1,5)}"
-                                th:value="${i}"
-                                th:text="${i}"
-                                th:selected="${i == todo.importance}">
-                        </option>
-                    </select>
-                    <button type="submit" class="btn btn-primary">수정</button>
+                <div class="form-group">
+                    <label class="pr-3" for="importance">중요도</label>
+                    <div class="custom-control custom-radio custom-control-inline"
+                         th:each="i : ${#numbers.sequence(1,5)}">
+                        <input class="custom-control-input" name="importance"
+                               th:checked="(${i} == ${todo.importance}) ? 'checked' : null"
+                               th:id="${todo.id+'radio'+i}" th:value="${i}" type="radio">
+                        <label class="custom-control-label" th:for="${todo.id+'radio'+i}" th:text="${i}">1</label>
+                    </div>
                 </div>
-            </form>
-            <p th:text="${todo.done}"></p>
-            <form th:action="@{/todo/done}" th:method="put">
-                <input type="hidden" name="id" th:value="${todo.id}">
-                <button type="submit" class="done btn btn-primary">완료</button>
+                <div class="form-group clearfix">
+                    <label class="pr-3 float-left" for="deadline">마감일</label>
+                    <span th:text="${todo.deadline == null ? '없음' : todo.deadline}"></span>
+                    <button class="btn btn-primary float-right sr-only" th:id="${'update'+todo.id}" type="submit">수정
+                    </button>
+                </div>
             </form>
         </div>
     </div>
@@ -96,8 +101,16 @@
 <script src="/webjars/jquery/3.4.1/jquery.min.js"></script>
 <script src="/webjars/bootstrap-datepicker/1.8.0/js/bootstrap-datepicker.js"></script>
 <script>
+
     $('.datepicker').datepicker({
         format: 'yy-mm-dd'
     });
+
+    $('.changeable').focusin(function (event) {
+        var updateId = event.target.form.id.value;
+        var element = document.getElementById('update' + updateId);
+        element.classList.remove("sr-only");
+    });
+
 </script>
 </html>

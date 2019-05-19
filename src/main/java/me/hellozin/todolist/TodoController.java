@@ -53,6 +53,7 @@ public class TodoController {
             baseTodo.setTitle(changedTodo.getTitle());
             baseTodo.setContent(changedTodo.getContent());
             baseTodo.setImportance(changedTodo.getImportance());
+            baseTodo.setDeadline(changedTodo.getDeadline());
             todoRepository.save(baseTodo);
         } else {
             /* Author Not Match Error */
