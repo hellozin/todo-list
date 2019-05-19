@@ -41,6 +41,7 @@ public class TodoListApplicationTests {
         todoForTest.setAuthor("hellozin");
         todoForTest.setTitle("New TODO");
         todoForTest.setContent("testing");
+        todoForTest.setImportance(1);
 
         todoRepository.save(todoForTest);
     }
@@ -48,7 +49,7 @@ public class TodoListApplicationTests {
     @Test
     public void login() throws Exception {
         mockMvc.perform(post("/login")
-                .param("name", "hellozin")
+                .param("author", "hellozin")
         )
                 .andDo(print())
                 .andExpect(cookie().value("author", "hellozin"));
@@ -78,6 +79,7 @@ public class TodoListApplicationTests {
                 .cookie(new Cookie("author", "hellozin"))
                 .param("title", "Another TODO")
                 .param("content", "create testing")
+                .param("importance", "1")
         )
                 .andDo(print())
                 .andExpect(status().is3xxRedirection());
@@ -106,6 +108,7 @@ public class TodoListApplicationTests {
                 .param("id", String.valueOf(todoForTest.getId()))
                 .param("title", "Changed Title")
                 .param("content", "Changed Content")
+                .param("importance", "1")
                 .cookie(new Cookie("author", todoForTest.getAuthor()))
         )
                 .andExpect(status().is3xxRedirection());
