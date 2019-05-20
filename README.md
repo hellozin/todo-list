@@ -8,6 +8,8 @@
 **사용한 프레임워크**  
 Spring Boot 2.0 + Spring JPA + Thymeleaf
 
+---
+
 **기능 요구사항**
 - [x] 새로운 TODO(제목과 내용)를 작성할 수 있다.
 - [x] TODO 목록을 볼 수 있다.
@@ -17,6 +19,8 @@ Spring Boot 2.0 + Spring JPA + Thymeleaf
 - [x] TODO 항목의 우선순위를 설정 및 조절할 수 있다.
 - [x] TODO 항목에 대한 완료 처리를 할 수 있다.
 - [x] 마감기한이 지난 TODO에 대해 알림을 노출할 수 있다
+
+---
 
 **설치**
 
