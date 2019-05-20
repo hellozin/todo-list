@@ -1,6 +1,6 @@
 package me.hellozin.todolist;
 
-import me.hellozin.todolist.exception.AuthorNotFoundException;
+import me.hellozin.todolist.exceptions.UnknownAuthorException;
 import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.HandlerInterceptor;
 
@@ -10,17 +10,17 @@ import java.util.Arrays;
 import java.util.Optional;
 
 @Component
-public class TodoInterceptor implements HandlerInterceptor {
+public class AuthorVerificationInterceptor implements HandlerInterceptor {
 
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) {
 
         Optional.ofNullable(request.getCookies())
                 .map(Arrays::stream)
-                .orElseThrow(AuthorNotFoundException::new)
+                .orElseThrow(UnknownAuthorException::new)
                 .filter(cookie -> cookie.getName().equals("author"))
                 .findAny()
-                .orElseThrow(AuthorNotFoundException::new);
+                .orElseThrow(UnknownAuthorException::new);
 
         return true;
     }

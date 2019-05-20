@@ -1,4 +1,4 @@
-package me.hellozin.todolist;
+package me.hellozin.todolist.todo;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -23,7 +23,6 @@ public class Todo {
     @Id
     @GeneratedValue
     private long id;
-
 
     @NotBlank
     private String author;

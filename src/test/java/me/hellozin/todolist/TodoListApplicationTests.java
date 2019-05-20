@@ -1,5 +1,7 @@
 package me.hellozin.todolist;
 
+import me.hellozin.todolist.todo.Todo;
+import me.hellozin.todolist.todo.TodoRepository;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -76,10 +78,11 @@ public class TodoListApplicationTests {
     @Test
     public void createTodoTest() throws Exception {
         mockMvc.perform(post("/todo")
-                .cookie(new Cookie("author", "hellozin"))
+                .param("author", "hellozin")
                 .param("title", "Another TODO")
                 .param("content", "create testing")
                 .param("importance", "1")
+                .cookie(new Cookie("author", "hellozin"))
         )
                 .andDo(print())
                 .andExpect(status().is3xxRedirection());

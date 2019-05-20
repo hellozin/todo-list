@@ -7,15 +7,15 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 @Configuration
 public class WebConfig implements WebMvcConfigurer {
 
-    private final TodoInterceptor todoInterceptor;
+    private final AuthorVerificationInterceptor authorVerificationInterceptor;
 
-    public WebConfig(TodoInterceptor todoInterceptor) {
-        this.todoInterceptor = todoInterceptor;
+    public WebConfig(AuthorVerificationInterceptor authorVerificationInterceptor) {
+        this.authorVerificationInterceptor = authorVerificationInterceptor;
     }
 
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
-        registry.addInterceptor(todoInterceptor)
+        registry.addInterceptor(authorVerificationInterceptor)
                 .excludePathPatterns("/login");
     }
 
