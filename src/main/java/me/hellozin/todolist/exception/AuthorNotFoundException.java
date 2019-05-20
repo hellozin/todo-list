@@ -1,4 +1,4 @@
-package me.hellozin.todolist;
+package me.hellozin.todolist.exception;
 
 public class AuthorNotFoundException extends TodoException {
 

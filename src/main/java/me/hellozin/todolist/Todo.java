@@ -1,7 +1,6 @@
 package me.hellozin.todolist;
 
 import lombok.Getter;
-import lombok.NonNull;
 import lombok.Setter;
 import lombok.ToString;
 import org.springframework.format.annotation.DateTimeFormat;
@@ -11,6 +10,8 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 import java.time.LocalDate;
 
 @Entity
@@ -23,10 +24,11 @@ public class Todo {
     @GeneratedValue
     private long id;
 
-    @NonNull
+
+    @NotBlank
     private String author;
 
-    @NonNull
+    @NotBlank
     private String title;
 
     private String content;
@@ -35,14 +37,21 @@ public class Todo {
     @Max(5)
     private int importance;
 
-    @NonNull
+    @NotNull
     private boolean done;
 
-    @DateTimeFormat(pattern = "yy-MM-dd")
+    @DateTimeFormat(pattern = "yyyy-MM-dd")
     private LocalDate deadline;
 
     public boolean isExpired() {
         return (deadline == null ? LocalDate.MAX : deadline).isBefore(LocalDate.now());
+    }
+
+    public void updateTodo(Todo changedTodo) {
+        this.title = changedTodo.getTitle();
+        this.content = changedTodo.getContent();
+        this.importance = changedTodo.getImportance();
+        this.deadline = changedTodo.getDeadline();
     }
 
 }

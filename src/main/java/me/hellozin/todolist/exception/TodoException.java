@@ -1,4 +1,4 @@
-package me.hellozin.todolist;
+package me.hellozin.todolist.exception;
 
 import lombok.Getter;
 

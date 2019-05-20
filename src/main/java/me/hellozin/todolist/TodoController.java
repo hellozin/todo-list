@@ -1,11 +1,16 @@
 package me.hellozin.todolist;
 
+import me.hellozin.todolist.exception.AuthorNotFoundException;
+import me.hellozin.todolist.exception.TodoException;
+import me.hellozin.todolist.exception.ValidatorException;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletResponse;
+import javax.validation.Valid;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -31,7 +36,7 @@ public class TodoController {
     }
 
     @GetMapping("/list")
-    public String getTodoList(Todo todo, Map<String, Object> model, @CookieValue String author) {
+    public String getTodoList(@ModelAttribute Todo todo, Map<String, Object> model, @CookieValue String author) {
         List<Todo> todoList = todoRepository.findAllByAuthorOrderByDoneAscImportanceDesc(author);
         model.put("todoList", todoList);
         model.put("author", author);
@@ -39,7 +44,10 @@ public class TodoController {
     }
 
     @PostMapping("/todo")
-    public String createTodo(Todo todo, @CookieValue String author) {
+    public String createTodo(@Valid @ModelAttribute Todo todo, BindingResult bindingResult, @CookieValue String author) {
+        if (bindingResult.hasErrors()) {
+            throw new ValidatorException(bindingResult);
+        }
         todo.setAuthor(author);
         todo.setDone(false);
         todoRepository.save(todo);
@@ -47,13 +55,10 @@ public class TodoController {
     }
 
     @PutMapping("/todo")
-    public String updateTodo(Todo changedTodo, @CookieValue String author) {
-        Todo baseTodo = todoRepository.findById(changedTodo.getId()).orElse(changedTodo);
+    public String updateTodo(@ModelAttribute Todo changedTodo, @CookieValue String author) {
+        Todo baseTodo = todoRepository.findById(changedTodo.getId()).orElseThrow(TodoException::new);
         if (author.equals(baseTodo.getAuthor())) {
-            baseTodo.setTitle(changedTodo.getTitle());
-            baseTodo.setContent(changedTodo.getContent());
-            baseTodo.setImportance(changedTodo.getImportance());
-            baseTodo.setDeadline(changedTodo.getDeadline());
+            baseTodo.updateTodo(changedTodo);
             todoRepository.save(baseTodo);
         } else {
             /* Author Not Match Error */
@@ -65,7 +70,6 @@ public class TodoController {
     public String deleteTodo(@RequestParam String id, @CookieValue String author) {
         Optional<Todo> todo = todoRepository.findById(Long.valueOf(id));
         String authorOfId = todo.map(Todo::getAuthor).orElse("");
-
         if (authorOfId.equals(author)) {
             todoRepository.deleteById(Long.valueOf(id));
         } else {
@@ -84,6 +88,11 @@ public class TodoController {
         });
 
         return "redirect:/list";
+    }
+
+    @ExceptionHandler
+    public String validate(ValidatorException exception, Model model) {
+        return "list";
     }
 
     @ExceptionHandler({
