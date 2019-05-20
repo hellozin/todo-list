@@ -1,8 +1,6 @@
 #!/bin/bash
 
-REPOSITORY=/home/ec2-user/app/git
-
-cd $REPOSITORY/todo-list/
+REPOSITORY=../
 
 echo "> Git Pull"
 
