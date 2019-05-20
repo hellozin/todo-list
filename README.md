@@ -38,3 +38,5 @@ git clone https://github.com/hellozin/todo-list.git
 chmod 755 ./deploy.sh
 ./deploy.sh
 ```
+
+[접속 가능한 URL](http://ec2-54-180-14-93.ap-northeast-2.compute.amazonaws.com:8080/login)
