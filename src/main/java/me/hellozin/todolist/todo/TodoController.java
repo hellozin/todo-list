@@ -1,8 +1,8 @@
-package me.hellozin.todolist;
+package me.hellozin.todolist.todo;
 
-import me.hellozin.todolist.exception.AuthorNotFoundException;
-import me.hellozin.todolist.exception.TodoException;
-import me.hellozin.todolist.exception.ValidatorException;
+import me.hellozin.todolist.exceptions.TodoException;
+import me.hellozin.todolist.exceptions.UnknownAuthorException;
+import me.hellozin.todolist.exceptions.ValidatorException;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -44,11 +44,10 @@ public class TodoController {
     }
 
     @PostMapping("/todo")
-    public String createTodo(@Valid @ModelAttribute Todo todo, BindingResult bindingResult, @CookieValue String author) {
+    public String createTodo(@Valid @ModelAttribute Todo todo, BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {
             throw new ValidatorException(bindingResult);
         }
-        todo.setAuthor(author);
         todo.setDone(false);
         todoRepository.save(todo);
         return "redirect:/list";
@@ -61,7 +60,7 @@ public class TodoController {
             baseTodo.updateTodo(changedTodo);
             todoRepository.save(baseTodo);
         } else {
-            /* Author Not Match Error */
+            throw new UnknownAuthorException();
         }
         return "redirect:/list";
     }
@@ -73,9 +72,8 @@ public class TodoController {
         if (authorOfId.equals(author)) {
             todoRepository.deleteById(Long.valueOf(id));
         } else {
-            /* Author Not Match Error */
+            throw new UnknownAuthorException();
         }
-
         return "redirect:/list";
     }
 
@@ -86,20 +84,15 @@ public class TodoController {
             todoById.setDone(!todoById.isDone());
             todoRepository.save(todoById);
         });
-
         return "redirect:/list";
     }
 
-    @ExceptionHandler
-    public String validate(ValidatorException exception, Model model) {
-        return "list";
-    }
-
     @ExceptionHandler({
-            AuthorNotFoundException.class,
+            UnknownAuthorException.class,
+            ValidatorException.class,
             TodoException.class
     })
-    public String tokenNotValid(TodoException exception, Model model) {
+    public String todoExceptionHandler(TodoException exception, Model model) {
         model.addAttribute("message", exception.getErrorMsg());
         return "error";
     }

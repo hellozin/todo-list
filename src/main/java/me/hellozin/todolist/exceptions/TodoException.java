@@ -1,4 +1,4 @@
-package me.hellozin.todolist.exception;
+package me.hellozin.todolist.exceptions;
 
 import lombok.Getter;
 
@@ -8,6 +8,6 @@ public class TodoException extends RuntimeException {
     protected String errorMsg;
 
     public TodoException() {
-        this.errorMsg = "Something wrong with TODO List.";
+        this.errorMsg = "Error occurred with TODO List.";
     }
 }

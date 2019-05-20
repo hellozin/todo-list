@@ -26,11 +26,12 @@
     <div class="row">
         <div class="col-md-12">
             <div class="error-template">
-                <h1>Oops!</h1>
-                <h2>An error has occurred.</h2>
+                <h1>Error 가 발생하였습니다.</h1>
+                <br/>
                 <div class="error-details" th:text="${message}">
-                    Sorry, an error has occured, Requested page not found!
+                    Error message
                 </div>
+                <br/>
                 <div class="error-actions">
                     <a class="btn btn-primary btn-lg" href="/login">
                         <span class="glyphicon glyphicon-home"></span> Back to Login </a>
