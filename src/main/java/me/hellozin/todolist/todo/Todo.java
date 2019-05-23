@@ -46,11 +46,4 @@ public class Todo {
         return (deadline == null ? LocalDate.MAX : deadline).isBefore(LocalDate.now());
     }
 
-    public void updateTodo(Todo changedTodo) {
-        this.title = changedTodo.getTitle();
-        this.content = changedTodo.getContent();
-        this.importance = changedTodo.getImportance();
-        this.deadline = changedTodo.getDeadline();
-    }
-
 }
