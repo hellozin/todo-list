@@ -2,26 +2,24 @@ package me.hellozin.todolist.todo;
 
 import me.hellozin.todolist.exceptions.TodoException;
 import me.hellozin.todolist.exceptions.UnknownAuthorException;
-import me.hellozin.todolist.exceptions.ValidatorException;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
-import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 
 @Controller
 public class TodoController {
 
-    private final TodoRepository todoRepository;
+    private final TodoService todoService;
 
-    public TodoController(TodoRepository todoRepository) {
-        this.todoRepository = todoRepository;
+    public TodoController(TodoService todoService) {
+        this.todoService = todoService;
     }
 
     @GetMapping("/login")
@@ -37,59 +35,53 @@ public class TodoController {
 
     @GetMapping("/list")
     public String getTodoList(@ModelAttribute Todo todo, Map<String, Object> model, @CookieValue String author) {
-        List<Todo> todoList = todoRepository.findAllByAuthorOrderByDoneAscImportanceDesc(author);
-        model.put("todoList", todoList);
+        model.put("todoList", todoService.getTodoList(author));
         model.put("author", author);
         return "list";
     }
 
     @PostMapping("/todo")
-    public String createTodo(@Valid @ModelAttribute Todo todo, BindingResult bindingResult) {
-        if (bindingResult.hasErrors()) {
-            throw new ValidatorException(bindingResult);
+    public String createTodo(@Valid @ModelAttribute Todo todo, BindingResult bindingResult, RedirectAttributes redirectAttributes, @CookieValue String author) {
+        if (!author.equals(todo.getAuthor())) {
+            throw new UnknownAuthorException();
         }
-        todo.setDone(false);
-        todoRepository.save(todo);
+        if (bindingResult.hasErrors()) {
+            redirectAttributes.addFlashAttribute("errMsg", bindingResult.getFieldError());
+            return "redirect:/list";
+        }
+        todoService.createTodo(todo, author);
         return "redirect:/list";
     }
 
     @PutMapping("/todo")
     public String updateTodo(@ModelAttribute Todo changedTodo, @CookieValue String author) {
-        Todo baseTodo = todoRepository.findById(changedTodo.getId()).orElseThrow(TodoException::new);
-        if (author.equals(baseTodo.getAuthor())) {
-            baseTodo.updateTodo(changedTodo);
-            todoRepository.save(baseTodo);
-        } else {
+        if (!author.equals(todoService.getAuthorById(changedTodo.getId()).orElse("Not" + author))) {
             throw new UnknownAuthorException();
         }
+        todoService.updateTodo(changedTodo);
         return "redirect:/list";
     }
 
     @DeleteMapping("/todo")
-    public String deleteTodo(@RequestParam String id, @CookieValue String author) {
-        Optional<Todo> todo = todoRepository.findById(Long.valueOf(id));
-        String authorOfId = todo.map(Todo::getAuthor).orElse("");
-        if (authorOfId.equals(author)) {
-            todoRepository.deleteById(Long.valueOf(id));
-        } else {
+    public String deleteTodo(@RequestParam long id, @CookieValue String author) {
+        if (!author.equals(todoService.getAuthorById(id).orElse("Not" + author))) {
             throw new UnknownAuthorException();
         }
+        todoService.deleteTodo(id);
         return "redirect:/list";
     }
 
     @PutMapping("/todo/done")
-    public String doneTodo(@RequestParam long id) {
-        Optional<Todo> mayTodoById = todoRepository.findById(id);
-        mayTodoById.ifPresent(todoById -> {
-            todoById.setDone(!todoById.isDone());
-            todoRepository.save(todoById);
-        });
+    public String doneTodo(@RequestParam long id, @CookieValue String author) {
+        if (!author.equals(todoService.getAuthorById(id).orElse("Not" + author))) {
+            throw new UnknownAuthorException();
+        }
+        todoService.toggleDone(id);
         return "redirect:/list";
     }
 
     @ExceptionHandler({
             UnknownAuthorException.class,
-            ValidatorException.class,
             TodoException.class
     })
     public String todoExceptionHandler(TodoException exception, Model model) {
