@@ -57,19 +57,20 @@
         <div class="card-body">
             <div class="form-group">
                 <div class="clearfix">
-                    <form class="float-left" th:action="@{/todos/${todo.id}/done}" th:method="put">
+                    <form class="float-left" th:action="@{/todos/{id}/done(id=${todo.id})}" th:method="put">
                         <button class="btn btn-outline-primary" th:text="${todo.isDone() ? '취소' : '완료'}" type="submit">
                             완료
                         </button>
                     </form>
-                    <form class="float-right" th:action="@{/todos/${todo.id}}" th:method="delete">
+                    <form class="float-right" th:action="@{/todos/{id}(id=${todo.id})}" th:method="delete">
                         <button aria-label="Close" class="close" type="submit">
                             <span aria-hidden="true">&times;</span>
                         </button>
                     </form>
                 </div>
             </div>
-            <form action="#" autocomplete="off" class="changeable" th:action="@{/todos/${todo.id}}" th:id="${todo.id}"
+            <form action="#" autocomplete="off" class="changeable" th:action="@{/todos/{id}(id=${todo.id})}"
+                  th:id="${todo.id}"
                   th:method="put" th:object="${todo}">
                 <div class="form-group">
                     <input class="form-control" th:name="title" th:value="${todo.title}" type="text">
@@ -109,7 +110,8 @@
     });
 
     $('.changeable').focusin(function (event) {
-        var updateId = event.target.form.id.value;
+        var updateId = event.target.form.id;
+        // var updateId = event.target.form.id.value;
         var element = document.getElementById('update' + updateId);
         element.classList.remove("sr-only");
     });

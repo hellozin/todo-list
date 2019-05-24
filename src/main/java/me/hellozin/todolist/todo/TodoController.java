@@ -82,10 +82,11 @@ public class TodoController {
         return "redirect:/todos";
     }
 
-    @PutMapping("/todo/{id}/done")
+    @PutMapping("/todos/{id}/done")
     public String doneTodo(@PathVariable long id,
                            @CookieValue String currentUser) {
-        if (!currentUser.equals(todoService.getAuthorById(id).orElse("!" + currentUser))) {
+        String toggleDoneAuthor = todoService.getAuthorById(id).orElse("!" + currentUser);
+        if (!currentUser.equals(toggleDoneAuthor)) {
             throw new UnknownAuthorException();
         }
         todoService.toggleDone(id);

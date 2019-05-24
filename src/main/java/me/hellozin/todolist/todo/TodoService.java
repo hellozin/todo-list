@@ -37,6 +37,8 @@ public class TodoService {
         todoById.setContent(updatedTodo.getContent());
         todoById.setImportance(updatedTodo.getImportance());
         todoById.setDeadline(updatedTodo.getDeadline());
+
+        todoRepository.save(todoById);
     }
 
     public void deleteTodo(long idForDelete) {
@@ -46,6 +48,7 @@ public class TodoService {
     public void toggleDone(long idForToggleDone) {
         Todo todoById = todoRepository.findById(idForToggleDone).orElseThrow(TodoException::new);
         todoById.setDone(!todoById.isDone());
+
         todoRepository.save(todoById);
     }
 
