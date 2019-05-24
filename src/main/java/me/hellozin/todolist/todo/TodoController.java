@@ -28,56 +28,68 @@ public class TodoController {
     }
 
     @PostMapping("/login")
-    public String doLogin(@RequestParam String author, HttpServletResponse response) {
-        response.addCookie(new Cookie("author", author));
-        return "redirect:/list";
+    public String doLogin(@RequestParam String currentUser, HttpServletResponse response) {
+        response.addCookie(new Cookie("currentUser", currentUser));
+        return "redirect:/todos";
     }
 
-    @GetMapping("/list")
-    public String getTodoList(@ModelAttribute Todo todo, Map<String, Object> model, @CookieValue String author) {
-        model.put("todoList", todoService.getTodoList(author));
-        model.put("author", author);
+    @GetMapping("/todos")
+    public String getTodoList(@ModelAttribute Todo todo,
+                              Map<String, Object> model,
+                              @CookieValue String currentUser) {
+        model.put("todoList", todoService.getTodoList(currentUser));
+        model.put("currentUser", currentUser);
         return "list";
     }
 
-    @PostMapping("/todo")
-    public String createTodo(@Valid @ModelAttribute Todo todo, BindingResult bindingResult, RedirectAttributes redirectAttributes, @CookieValue String author) {
-        if (!author.equals(todo.getAuthor())) {
+    @PostMapping("/todos")
+    public String createTodo(@Valid @ModelAttribute Todo todo,
+                             BindingResult bindingResult,
+                             RedirectAttributes redirectAttributes,
+                             @CookieValue String currentUser) {
+        if (!currentUser.equals(todo.getAuthor())) {
             throw new UnknownAuthorException();
         }
         if (bindingResult.hasErrors()) {
-            redirectAttributes.addFlashAttribute("errMsg", bindingResult.getFieldError());
-            return "redirect:/list";
+            String errMsg = todoService.getSimpleErrorMsg(bindingResult.getFieldErrors());
+            redirectAttributes.addFlashAttribute("errMsg", errMsg);
+            return "redirect:/todos";
         }
-        todoService.createTodo(todo, author);
-        return "redirect:/list";
+        todoService.createTodo(todo, currentUser);
+        return "redirect:/todos";
     }
 
-    @PutMapping("/todo")
-    public String updateTodo(@ModelAttribute Todo changedTodo, @CookieValue String author) {
-        if (!author.equals(todoService.getAuthorById(changedTodo.getId()).orElse("Not" + author))) {
+    @PutMapping("/todos/{id}")
+    public String updateTodo(@PathVariable long id,
+                             @ModelAttribute Todo changedTodo,
+                             @CookieValue String currentUser) {
+        String changedTodoAuthor = todoService.getAuthorById(id).orElse("!" + currentUser);
+        if (!currentUser.equals(changedTodoAuthor)) {
             throw new UnknownAuthorException();
         }
         todoService.updateTodo(changedTodo);
-        return "redirect:/list";
+        return "redirect:/todos";
     }
 
-    @DeleteMapping("/todo")
-    public String deleteTodo(@RequestParam long id, @CookieValue String author) {
-        if (!author.equals(todoService.getAuthorById(id).orElse("Not" + author))) {
+    @DeleteMapping("/todos/{id}")
+    public String deleteTodo(@PathVariable long id,
+                             @CookieValue String currentUser) {
+        String deletedTodoAuthor = todoService.getAuthorById(id).orElse("!" + currentUser);
+        if (!currentUser.equals(deletedTodoAuthor)) {
             throw new UnknownAuthorException();
         }
         todoService.deleteTodo(id);
-        return "redirect:/list";
+        return "redirect:/todos";
     }
 
-    @PutMapping("/todo/done")
-    public String doneTodo(@RequestParam long id, @CookieValue String author) {
-        if (!author.equals(todoService.getAuthorById(id).orElse("Not" + author))) {
+    @PutMapping("/todo/{id}/done")
+    public String doneTodo(@PathVariable long id,
+                           @CookieValue String currentUser) {
+        if (!currentUser.equals(todoService.getAuthorById(id).orElse("!" + currentUser))) {
             throw new UnknownAuthorException();
         }
         todoService.toggleDone(id);
-        return "redirect:/list";
+        return "redirect:/todos";
     }
 
     @ExceptionHandler({

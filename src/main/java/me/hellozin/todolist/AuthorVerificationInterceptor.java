@@ -18,7 +18,7 @@ public class AuthorVerificationInterceptor implements HandlerInterceptor {
         Optional.ofNullable(request.getCookies())
                 .map(Arrays::stream)
                 .orElseThrow(UnknownAuthorException::new)
-                .filter(cookie -> cookie.getName().equals("author"))
+                .filter(cookie -> cookie.getName().equals("currentUser"))
                 .findAny()
                 .orElseThrow(UnknownAuthorException::new);
 

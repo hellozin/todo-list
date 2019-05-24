@@ -2,6 +2,7 @@ package me.hellozin.todolist.todo;
 
 import me.hellozin.todolist.exceptions.TodoException;
 import org.springframework.stereotype.Service;
+import org.springframework.validation.FieldError;
 
 import java.util.List;
 import java.util.Optional;
@@ -46,6 +47,18 @@ public class TodoService {
         Todo todoById = todoRepository.findById(idForToggleDone).orElseThrow(TodoException::new);
         todoById.setDone(!todoById.isDone());
         todoRepository.save(todoById);
+    }
+
+    public String getSimpleErrorMsg(List<FieldError> fieldErrors) {
+        StringBuilder builder = new StringBuilder();
+        for (FieldError fieldError : fieldErrors) {
+            builder.append('[');
+            builder.append(fieldError.getField());
+            builder.append(']');
+            builder.append(fieldError.getDefaultMessage());
+            builder.append(System.getProperty("line.separator"));
+        }
+        return builder.toString();
     }
 
 }

@@ -26,7 +26,8 @@
 <form class="form-signin" action="#" th:action="@{/login}" method="post">
     <h1 class="display-4 mb-5">Welcome</h1>
     <label for="inputAuthor" class="sr-only">Author</label>
-    <input type="text" id="inputAuthor" name="author" class="form-control" placeholder="Choose your name." required=""
+    <input type="text" id="inputAuthor" name="currentUser" class="form-control" placeholder="Choose your name."
+           required=""
            autofocus="">
     <button class="btn btn-lg btn-primary btn-block my-5" type="submit">Enter</button>
 </form>

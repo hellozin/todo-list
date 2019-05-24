@@ -15,10 +15,10 @@
 
 <div class="container rounded">
     <div class="pricing-header pt-5 pb-3 mx-auto text-center">
-        <h1 class="display-4"><span th:text="${author}"></span>'s TODO List</h1>
+        <h1 class="display-4"><span th:text="${currentUser}"></span>'s TODO List</h1>
     </div>
-    <form autocomplete="off" class="mx-auto" id="todo-form" method="post" th:action="@{/todo}" th:object="${todo}">
-        <input type="hidden" name="author" th:value="${author}">
+    <form autocomplete="off" class="mx-auto" id="todo-form" method="post" th:action="@{/todos}" th:object="${todo}">
+        <input type="hidden" th:name="author" th:value="${currentUser}">
         <p class="lead">새로운 TODO를 작성해보세요.</p>
         <div class="form-group">
             <input class="form-control" placeholder="Title" th:field="*{title}" type="text">
@@ -57,23 +57,20 @@
         <div class="card-body">
             <div class="form-group">
                 <div class="clearfix">
-                    <form class="float-left" th:action="@{/todo/done}" th:method="put">
-                        <input name="id" th:value="${todo.id}" type="hidden">
+                    <form class="float-left" th:action="@{/todos/${todo.id}/done}" th:method="put">
                         <button class="btn btn-outline-primary" th:text="${todo.isDone() ? '취소' : '완료'}" type="submit">
                             완료
                         </button>
                     </form>
-                    <form class="float-right" th:action="@{/todo}" th:method="delete">
-                        <input name="id" readonly th:value="${todo.id}" type="hidden">
+                    <form class="float-right" th:action="@{/todos/${todo.id}}" th:method="delete">
                         <button aria-label="Close" class="close" type="submit">
                             <span aria-hidden="true">&times;</span>
                         </button>
                     </form>
                 </div>
             </div>
-            <form action="#" autocomplete="off" class="changeable" th:action="@{/todo}" th:id="${todo.id}"
+            <form action="#" autocomplete="off" class="changeable" th:action="@{/todos/${todo.id}}" th:id="${todo.id}"
                   th:method="put" th:object="${todo}">
-                <input name="id" th:value="${todo.id}" type="hidden">
                 <div class="form-group">
                     <input class="form-control" th:name="title" th:value="${todo.title}" type="text">
                 </div>
