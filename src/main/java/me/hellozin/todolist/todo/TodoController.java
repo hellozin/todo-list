@@ -61,11 +61,18 @@ public class TodoController {
 
     @PutMapping("/todos/{id}")
     public String updateTodo(@PathVariable long id,
-                             @ModelAttribute Todo changedTodo,
+                             @Valid @ModelAttribute Todo changedTodo,
+                             BindingResult bindingResult,
+                             RedirectAttributes redirectAttributes,
                              @CookieValue String currentUser) {
         String changedTodoAuthor = todoService.getAuthorById(id).orElse("!" + currentUser);
         if (!currentUser.equals(changedTodoAuthor)) {
             throw new UnknownAuthorException();
+        }
+        if (bindingResult.hasErrors()) {
+            String errMsg = todoService.getSimpleErrorMsg(bindingResult.getFieldErrors());
+            redirectAttributes.addFlashAttribute("errMsg", errMsg);
+            return "redirect:/todos";
         }
         todoService.updateTodo(changedTodo);
         return "redirect:/todos";
