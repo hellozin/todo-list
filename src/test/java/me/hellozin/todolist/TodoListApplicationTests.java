@@ -59,7 +59,7 @@ public class TodoListApplicationTests {
 
     @Test
     public void showTodoList() throws Exception {
-        MvcResult mvcResult = mockMvc.perform(get("/list")
+        MvcResult mvcResult = mockMvc.perform(get("/todos")
                 .cookie(new Cookie("currentUser", todoForTest.getAuthor()))
         )
                 .andExpect(status().isOk())
@@ -77,12 +77,12 @@ public class TodoListApplicationTests {
 
     @Test
     public void createTodoTest() throws Exception {
-        mockMvc.perform(post("/todo")
+        mockMvc.perform(post("/todos")
                 .param("author", "hellozin")
                 .param("title", "Another TODO")
                 .param("content", "create testing")
                 .param("importance", "1")
-                .cookie(new Cookie("author", "hellozin"))
+                .cookie(new Cookie("currentUser", "hellozin"))
         )
                 .andDo(print())
                 .andExpect(status().is3xxRedirection());
@@ -96,9 +96,8 @@ public class TodoListApplicationTests {
     public void deleteTodoTest() throws Exception {
         Todo todoForDelete = todoRepository.findAllByAuthor(todoForTest.getAuthor()).get(0);
 
-        mockMvc.perform(delete("/todo")
-                .param("id", String.valueOf(todoForDelete.getId()))
-                .cookie(new Cookie("author", todoForTest.getAuthor()))
+        mockMvc.perform(delete("/todos/" + todoForDelete.getId())
+                .cookie(new Cookie("currentUser", todoForTest.getAuthor()))
         )
                 .andExpect(status().is3xxRedirection());
 
@@ -107,12 +106,12 @@ public class TodoListApplicationTests {
 
     @Test
     public void updateTodoTest() throws Exception {
-        mockMvc.perform(put("/todo")
-                .param("id", String.valueOf(todoForTest.getId()))
+        mockMvc.perform(put("/todos/" + todoForTest.getId())
+                .param("author", "hellozin")
                 .param("title", "Changed Title")
                 .param("content", "Changed Content")
                 .param("importance", "1")
-                .cookie(new Cookie("author", todoForTest.getAuthor()))
+                .cookie(new Cookie("currentUser", todoForTest.getAuthor()))
         )
                 .andExpect(status().is3xxRedirection());
 
